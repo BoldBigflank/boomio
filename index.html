@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>Boomio</title>
+</head>
+<body>
+    <h1>Hello</h1>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    var game = {}
+    var player = {}
+    var socket = io.connect('http://localhost:3000');
+    console.log("id", socket)
+    socket.on('news', function (data) {
+        console.log(data);
+        // socket.emit('my other event', { my: 'data' });
+    });
+
+    socket.emit('join', function(data){
+        // Join the game, get our player id back
+        console.log("joined", data)
+        player = data.player;
+    })
+    </script>
+</body>
+</html>
+
+
