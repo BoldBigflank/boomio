@@ -1,27 +1,68 @@
-<html>
+<html ng-app="boomioApp">
 <head>
     <title>Boomio</title>
+    
+    <script src="/javascripts/angular.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/boomio.js"></script>
+
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+
+    
 </head>
 <body>
-    <h1>Hello</h1>
+    <div class="container" ng-controller="GameCtrl">
+        <h1>Hello {{player.name}}</h1>
+        <!-- The Players -->
+        <div class="row center-block" >
+            <div class="col-md-2" ng-if="player.id != p.id " ng-repeat="p in game.players">
+                <div class="row">
+                    <div class="col-md-12">
+                        {{p.name}} <span class="glyphicon glyphicon-heart" ng-repeat="a in range(p.lives) track by $index"></span>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card col-md-1" ng-repeat="card in p.hand track by $index">
+                            {{$index}}
+                        </div>
+                    </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-    var game = {}
-    var player = {}
-    var socket = io.connect('http://localhost:3000');
-    console.log("id", socket)
-    socket.on('news', function (data) {
-        console.log(data);
-        // socket.emit('my other event', { my: 'data' });
-    });
+                </div>
+            </div>
+        </div>
+        <!-- The Game Area -->
+        <div class="row">
+            <div class="col-md-offset-3 col-md-2 well">
+                Deck
+            </div>
+            <div class="well col-md-2">
+                Discard
+            </div>
+            <div class="col-md-2">
+                Timer<br>{{game.timer}}
+            </div>
 
-    socket.emit('join', function(data){
-        // Join the game, get our player id back
-        console.log("joined", data)
-        player = data.player;
-    })
-    </script>
+        </div>
+        <!-- Player Info/Hand -->
+        <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+          <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    {{player.name}}
+                </div>
+                <div class="col-md-6">
+                    Lives: <span class="glyphicon glyphicon-heart" ng-repeat="a in range(player.lives) track by $index"></span>
+                </div>
+                <div class="card col-md-1" ng-repeat="card in player.hand track by $index">
+                    <span>{{card}}</span>
+                </div>
+            </div>
+          </div>
+        </nav>
+    </div>
+    <script src="/javascripts/jquery-2.1.1.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
 </body>
 </html>
 
