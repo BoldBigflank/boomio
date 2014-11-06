@@ -17,7 +17,7 @@ var playerToGame = {};
 // var questions;
 
 // BOOMOIO Settings
-var maxPlayers = 4;
+var maxPlayers = 6;
 var startHand = 7;
 var startTime = 60;
 var startLives = 5;
@@ -130,20 +130,26 @@ exports.join = function(uuid, cb){
 
     players.push(player); // All players
     game.players.push(player); // Players for the game
-    if(_.where(game.players, {state:'active'}).length == maxPlayers){
-        game.state = 'active'
-        // Add the players to playerOrder
-        var playerNumber = 0;
-        for( var i in game.players){
-            var player = game.players[i]
-            if(player.state == 'active'){
-                player.position = playerNumber++;
-                player.name = "Player " + (player.position+1);
-            } 
-        }
-        game.turn = 0;
-    }
+    
     cb(null, game)
+}
+
+exports.start = function(gameId, cb){
+    var game = _.find(games, function(game){ return game.state == "prep" });
+    if(!game) return cb("game not found");
+    if(_.find(game.players, function(player){player.state=="active"}).length < 2) return cb("Not enough players to start");
+
+    game.state = 'active'
+    var playerNumber = 0;
+    for( var i in game.players){
+        var player = game.players[i]
+        if(player.state == 'active'){
+            player.position = playerNumber++;
+            player.name = "Player " + (player.position+1);
+        } 
+    }
+    game.turn = 0;
+    
 }
 
 exports.leave = function(gameId, uuid, cb){
@@ -234,9 +240,11 @@ exports.playCard = function(gameId, id, card, cb){
             break;
         case "5":
             // Subtract 5 from the timer
+            game.timer -= 5;
             break;
         case "10":
             // Subtract 10 from the timer
+            game.timer -= 10;
             break;
         case "REVERSE":
             // Reverse the order

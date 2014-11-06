@@ -55,7 +55,9 @@
                     Lives: <span class="glyphicon glyphicon-heart" ng-repeat="a in range(player.lives) track by $index"></span>
                 </div>
                 <div class="card col-md-1" ng-repeat="card in player.hand track by $index">
-                    <span>{{card}}</span>
+                    <a href="#" ng-click="playCard()">
+                        <span>{{card}}</span>
+                    </a>
                 </div>
             </div>
           </div>

@@ -25,10 +25,9 @@ angular.module('boomioApp', [])
             return new Array(n);
         };
 
-        socket.on('game', function(gameData){
-            console.log("gameData received");
-            $scope.loadData(gameData);
-        });
+        $scope.playCard = function(i){
+            console.log("Play card", i);
+        };
     
         socket.emit('join', function(data){
             // Join the game, get our player id back
@@ -37,5 +36,9 @@ angular.module('boomioApp', [])
             $scope.loadPlayer(data.player);
             // player = data.player;
         });
+
+        socket.on('game', function(gameData){
+            console.log("gameData received");
+            $scope.loadGame(gameData);
+        });
     }]);
-    

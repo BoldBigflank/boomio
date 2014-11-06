@@ -39,12 +39,19 @@ io.on('connection', function (socket) {
         game.join(socket.id, function(err, res){
             if (err) { socket.emit("alert", err); }
             else{
-                // socket.set('gameId', res.id);
-                socket.broadcast.emit(res.id, res );
+                socket.join(res.id);
+                console.log("emitting to", res.id);
+                socket.to(res.id).emit('game', res );
             }
           cb({game: res, player: game.getPlayer(uuid) });
 
         });
+    });
+
+    // Player calls to start the game
+    socket.on('start', function(){
+        game.start(game.playerToGame[socket.id]);
+
     });
 
     // User Leaves
