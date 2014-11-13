@@ -44,6 +44,11 @@
             </div>
 
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <a href="" ng-click="startGame()" class="button">start</a>
+            </div>
+        </div>
         <!-- Player Info/Hand -->
         <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
           <div class="container">
@@ -55,7 +60,7 @@
                     Lives: <span class="glyphicon glyphicon-heart" ng-repeat="a in range(player.lives) track by $index"></span>
                 </div>
                 <div class="card col-md-1" ng-repeat="card in player.hand track by $index">
-                    <a href="#" ng-click="playCard()">
+                    <a href="#" ng-click="playCard($index)">
                         <span>{{card}}</span>
                     </a>
                 </div>

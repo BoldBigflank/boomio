@@ -81,34 +81,35 @@ var newGame = function(cb){
     };
     games.push(game);
     return game;
-}
+};
 
 var nextPlayer = function(game){
     // Find the current player index
     // Add {{direction}}
     // Set the new player
     return game;
-}
+};
 
 var drawCards = function(game, player, num){
     for(var i=0; i < num; i++)
         player.hand.push(game.deck.pop());
 
-}
+};
 
 exports.playerToGame = function(playerId, cb){
+    console.log("playerToGame", playerId, playerToGame[playerId]);
     return playerToGame[playerId];
-}
+};
 
 exports.join = function(uuid, cb){
     if(uuid === undefined) {
-        cb("UUID not found")
-        return
+        cb("UUID not found");
+        return;
     }
     var game = _.find(games, function(game){ return game.state == "prep" });
     if(typeof game == "undefined") {
         game = newGame();
-        games.push(game);
+        // games.push(game);
     }
     // game.now = new Date().getTime()
     var player = _.findWhere( game.players, {id: uuid} )
@@ -135,21 +136,21 @@ exports.join = function(uuid, cb){
 }
 
 exports.start = function(gameId, cb){
-    var game = _.find(games, function(game){ return game.state == "prep" });
-    if(!game) return cb("game not found");
-    if(_.find(game.players, function(player){player.state=="active"}).length < 2) return cb("Not enough players to start");
-
-    game.state = 'active'
-    var playerNumber = 0;
+    var game = games[gameId];
+    if(!game) return cb("game not found", null);
+    // var activePlayers = _.find(game.players, function(player){(player.state=="active")});
+    // if(!activePlayers || activePlayers.length < 2) return cb("Not enough players to start", null);
+    if(game.players.length < 2) return cb("Not enough players to start", null);
+    
+    game.state = 'active';
     for( var i in game.players){
-        var player = game.players[i]
+        var player = game.players[i];
         if(player.state == 'active'){
-            player.position = playerNumber++;
-            player.name = "Player " + (player.position+1);
+            game.turn = player.id;
+            break;
         } 
     }
-    game.turn = 0;
-    
+    cb(null, game);
 }
 
 exports.leave = function(gameId, uuid, cb){
@@ -210,9 +211,11 @@ exports.setName = function(id, name, cb){
     cb(null, { players: game.players })
 }
 
-exports.playCard = function(gameId, id, card, cb){
+exports.playCard = function(playerId, cardIndex, cb){
+    var gameId = playerToGame[playerId];
     var game = games[gameId];
-    var player = game.players[id];
+    var player = _.findWhere( game.players, {id: playerId} ); // game.players[id];
+    var card = player.hand[cardIndex];
 
     if(game.state != "active"){
         cb ("The game has not yet started. Get more friends.", null)
@@ -226,13 +229,12 @@ exports.playCard = function(gameId, id, card, cb){
 
     // Make sure the player owns that piece
     if(player.hand.indexOf(card) == -1){
-        cb("Player has already used that piece", null)
+        cb("Player does not have that card", null)
         return;
     }
 
     // All checks have passed, manipulate the board based on the card
-    cardIndex = player.hand.indexOf(card);
-    player.hand.remove(cardIndex);
+    player.hand.splice(cardIndex, 1);
 
     switch(card){
         case "HOLD":
@@ -300,6 +302,7 @@ exports.playCard = function(gameId, id, card, cb){
 
     // 
 
+    cb(null, game);
 
 }
 

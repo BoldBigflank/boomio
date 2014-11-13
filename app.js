@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var game = require('./game.js');
+var boomo = require('./game.js');
 
 var port = process.env.PORT || 3000;
 server.listen(port);
@@ -24,7 +24,7 @@ io.on('connection', function (socket) {
 
     // No persistence
     uuid = socket.id;
-    console.log("id", socket.id);
+    console.log("connection", socket.id);
 
     //socket.set('uuid', uuid);
     socket.on('connect', function(cb){
@@ -36,21 +36,28 @@ io.on('connection', function (socket) {
     socket.on('join', function(cb){
         // This is called manually when the client has loaded
         console.log("Player joined");
-        game.join(socket.id, function(err, res){
+        boomo.join(socket.id, function(err, res){
             if (err) { socket.emit("alert", err); }
             else{
                 socket.join(res.id);
                 console.log("emitting to", res.id);
                 socket.to(res.id).emit('game', res );
             }
-          cb({game: res, player: game.getPlayer(uuid) });
+          cb({game: res, player: boomo.getPlayer(uuid) });
 
         });
     });
 
     // Player calls to start the game
-    socket.on('start', function(){
-        game.start(game.playerToGame[socket.id]);
+    socket.on('start', function(cb){
+        var gameId = boomo.playerToGame(socket.id);
+        boomo.start(gameId, function(err, game){
+            if(!err) {
+                console.log("Starting game", gameId);
+                socket.to(gameId).emit('game', game);
+            }
+            return cb(err, game);
+        });
 
     });
 
@@ -64,6 +71,13 @@ io.on('connection', function (socket) {
 
     });
 
-    // 
+    // User plays a card
+    socket.on('playCard', function(data, cb){
+        console.log("playCard");
+        boomo.playCard(socket.id, data.card, function(err, game){
+            if(!err) socket.to(game.id).emit('game', game);
+            cb(err, game);
+        });
+    });
 
 });
