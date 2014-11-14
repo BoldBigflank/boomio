@@ -84,6 +84,15 @@ var newGame = function(cb){
     return game;
 };
 
+var newRound = function(game){
+    // Deal everyone up to 7 cards
+    for(var p in game.players){
+        var player = game.players[p];
+        while(player.hand.length < startHand) drawCards(game, player, 1);
+    }
+    game.timer = startTime;
+};
+
 var nextPlayer = function(gameId){
     var game = games[gameId];
     console.log("game", game);
@@ -317,6 +326,13 @@ exports.playCard = function(playerId, cardIndex, cb){
     // Determine win conditions
 
     // If a player has a hand of 0 cards, everyone else
+    if(game.timer < 0){
+        // Player loses life
+        player.lives--;
+        newRound(game);
+    } else if (player.hand.length == 0){
+        // Everyone but player loses life
+    }
 
     // No winner, advance play
     nextPlayer(game.id);
