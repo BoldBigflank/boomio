@@ -74,6 +74,7 @@ var newGame = function(cb){
         id:games.length,
         timer:startTime,
         deck:newDeck(),
+        discard:[],
         players:[],
         turn:null,
         direction:1,
@@ -83,11 +84,23 @@ var newGame = function(cb){
     return game;
 };
 
-var nextPlayer = function(game){
+var nextPlayer = function(gameId){
+    var game = games[gameId];
+    console.log("game", game);
     // Find the current player index
-    // Add {{direction}}
-    // Set the new player
-    return game;
+    var currentPlayer = game.players[game.turn];
+    // var currentPlayer = _.findWhere(game.players, {id:game.turn});
+    var playerIndex = game.players.indexOf(currentPlayer);
+    for(var i = 0; i < game.players.length; i++){
+        game.turn = (game.turn + game.direction) % game.players.length;
+        while (game.turn < 0) game.turn += game.players.length; // How do I loop the number?
+        console.log("game.turn",game.turn);
+        if(game.players[game.turn].state == 'active') {
+            games[gameId] = game;
+            return;
+        }
+    }
+    
 };
 
 var drawCards = function(game, player, num){
@@ -132,8 +145,8 @@ exports.join = function(uuid, cb){
     players.push(player); // All players
     game.players.push(player); // Players for the game
     
-    cb(null, game)
-}
+    cb(null, game);
+};
 
 exports.start = function(gameId, cb){
     var game = games[gameId];
@@ -146,36 +159,37 @@ exports.start = function(gameId, cb){
     for( var i in game.players){
         var player = game.players[i];
         if(player.state == 'active'){
-            game.turn = player.id;
+            game.turn = i;
             break;
-        } 
+        }
     }
     cb(null, game);
-}
+};
 
 exports.leave = function(gameId, uuid, cb){
     var game = games[gameId];
+    if(!game) return;
     // Remove their player
-    var player = _.find(game.players, function(player){ return player.id == uuid })
+    var player = _.findWith(game.players, {id:uuid});
     if(player){
         if(player.state != "spectating") player.state = "disconnect";
-        // If only one active player left, end the game
+        // If only one active player left, end the round
         if(game.state == "active"){
             if(_.where(game.players, {state:'active'}).length <= 1)
                 game.state = "ended";
             else {
                 while(_.findWhere(game.players, {position:game.turn}).state != 'active'){
-                    game.turn = (game.turn+1) % game.players.length;
+                    game.turn = (game.turn + game.direction) % game.players.length;
                 }
             }
         } else if(game.state == "prep") {
             // Remove players from games that haven't started
             game.players = _.without(game.players, player);
         }
-        cb(null, {players: game.players, state: game.state, turn: game.turn})
+        cb(null, {players: game.players, state: game.state, turn: game.turn});
     }
     // game.players = _.without(game.players, player)
-}
+};
 
 exports.getGame = function(){ return game }
 
@@ -222,7 +236,7 @@ exports.playCard = function(playerId, cardIndex, cb){
         return;
     } 
 
-    else if( game.turn != player.id ){
+    else if( game.players[game.turn].id != player.id ){
         cb ("It is not your turn", null)
         return;
     }
@@ -254,7 +268,7 @@ exports.playCard = function(playerId, cardIndex, cb){
             break;
         case "SKIP":
             // Skip the next player
-            nextPlayer(game);
+            nextPlayer(game.id);
             break;
         case ":0":
             game.timer = 0;
@@ -272,6 +286,7 @@ exports.playCard = function(playerId, cardIndex, cb){
                 if(p != player && player.state == 'active'){
                     drawCards(game, player, 1);
                 }
+                game.players[i] = p;
             }
             break;
         case "DRAW2":
@@ -280,6 +295,7 @@ exports.playCard = function(playerId, cardIndex, cb){
                 if(p != player && player.state == 'active'){
                     drawCards(player, 2);
                 }
+                game.players[i] = p;
             }
             break;
         case "TRADE":
@@ -293,14 +309,19 @@ exports.playCard = function(playerId, cardIndex, cb){
         case "BOMB":
             // Each person must play a HOLD from their hand or lose a life
             // If everyone else plays a HOLD, the current player loses a life
+
             break;
     }
+
+    // Place the card in the discard
+    game.discard.push(card);
 
     // Determine win conditions
 
     // If a player has a hand of 0 cards, everyone else
 
-    // 
+    // No winner, advance play
+    nextPlayer(game.id);
 
     cb(null, game);
 

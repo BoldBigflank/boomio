@@ -41,7 +41,7 @@ io.on('connection', function (socket) {
             else{
                 socket.join(res.id);
                 console.log("emitting to", res.id);
-                socket.to(res.id).emit('game', res );
+                io.to(res.id).emit('game', res );
             }
           cb({game: res, player: boomo.getPlayer(uuid) });
 
@@ -54,7 +54,7 @@ io.on('connection', function (socket) {
         boomo.start(gameId, function(err, game){
             if(!err) {
                 console.log("Starting game", gameId);
-                socket.to(gameId).emit('game', game);
+                io.to(gameId).emit('game', game);
             }
             return cb(err, game);
         });
@@ -63,7 +63,11 @@ io.on('connection', function (socket) {
 
     // User Leaves
     socket.on('disconnect', function(){
-
+        var gameId = boomo.playerToGame(socket.id);
+        boomo.leave(socket.id, function(){
+            
+        });
+        console.log("Player left", socket.id);
     });
 
     // User chooses a name
@@ -75,8 +79,8 @@ io.on('connection', function (socket) {
     socket.on('playCard', function(data, cb){
         console.log("playCard");
         boomo.playCard(socket.id, data.card, function(err, game){
-            if(!err) socket.to(game.id).emit('game', game);
-            cb(err, game);
+            if(!err) io.to(game.id).emit('game', game);
+            cb(err);
         });
     });
 

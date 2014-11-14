@@ -43,9 +43,8 @@ angular.module('boomioApp', [])
             // Get the card
             var card = $scope.player.hand[i];
             console.log("Play card", i, card);
-            socket.emit('playCard', {card:i}, function(err, game){
+            socket.emit('playCard', {card:i}, function(err){
                 if(err) console.log(err);
-                else $scope.loadGame(game);
             });
             
         };
