@@ -283,19 +283,17 @@ exports.playCard = function(playerId, cardIndex, cb){
             // Everyone still alive who isn't the current player draws
             for (var i in game.players){
                 var p = game.players[i];
-                if(p != player && player.state == 'active'){
-                    drawCards(game, player, 1);
+                if(p != player && p.state == 'active'){
+                    drawCards(game, p, 1);
                 }
-                game.players[i] = p;
             }
             break;
         case "DRAW2":
             for(var i in game.players){
                 var p = game.players[i];
-                if(p != player && player.state == 'active'){
-                    drawCards(player, 2);
+                if(p != player && p.state == 'active'){
+                    drawCards(game, p, 2);
                 }
-                game.players[i] = p;
             }
             break;
         case "TRADE":
