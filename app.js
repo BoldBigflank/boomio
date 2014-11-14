@@ -65,15 +65,20 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function(){
         var gameId = boomo.playerToGame(socket.id);
         boomo.leave(socket.id, function(){
-            
+
         });
         console.log("Player left", socket.id);
     });
 
     // User chooses a name
-    socket.on('name', function(data){
-
+    socket.on('name', function(data, cb){
+        boomio.setName(socket.id, data.name, cb)
     });
+
+    socket.on('onHover', function(data){
+        // Let the other players know what card they're hovering over
+
+    })
 
     // User plays a card
     socket.on('playCard', function(data, cb){
