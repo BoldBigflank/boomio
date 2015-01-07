@@ -321,7 +321,7 @@ exports.playCard = function(playerId, cardIndex, cb){
     }
 
     // Place the card in the discard
-    game.discard.push(card);
+    game.discard.unshift(card);
 
     // Determine win conditions
 
