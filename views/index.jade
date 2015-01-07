@@ -1,5 +1,39 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+    .container(ng-controller='GameCtrl')
+      //- The Players 
+      .row.center-block
+        .col-md-2(ng-if='player.id != p.id ', ng-repeat='p in otherPlayers')
+          .row
+            .col-md-12
+              | {{p.name}}
+              span.glyphicon.glyphicon-heart(ng-repeat='a in range(p.lives) track by $index')
+            .col-md-12
+              .card.col-md-1(ng-repeat='card in p.hand track by $index')
+                | {{$index}}  
+      .row
+        .col-md-4.col-md-offset-4
+          .well.col-md-12
+            | Timer
+            br
+            | {{game.timer}}
+          .well.col-md-12
+            .card.col-md-4(ng-repeat='card in game.discard | limitTo: 3')
+              span {{card}}
+      .row
+        .col-md-12
+          a.button(href='', ng-click='startGame()') start
+      //- Player Info/Hand 
+      nav.navbar.navbar-default.navbar-fixed-bottom(role='navigation')
+        .container
+          .row
+            .col-md-6
+              | {{player.name}}
+            .col-md-6
+              | Lives:
+              span.glyphicon.glyphicon-heart(ng-repeat='a in range(player.lives) track by $index')
+            .card.col-md-1(ng-repeat='card in player.hand track by $index')
+              a(href='#', ng-click='playCard($index)')
+                span {{card}}
+block scripts
