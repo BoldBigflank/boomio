@@ -16,7 +16,7 @@ angular.module('boomioApp', [])
                 if(p.id == $scope.playerId){
                     $scope.player = p;
                     // Shift players at the current player
-                    $scope.otherPlayers = $scope.game.players.slice(x).concat( $scope.game.players.slice(0,x) );
+                    $scope.otherPlayers = $scope.game.players.slice(x+1).concat( $scope.game.players.slice(0,x) );
                     break;
                 }
             }

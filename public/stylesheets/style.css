@@ -1,9 +1,34 @@
+.players{
+	min-height:150px;
+}
+
 
 .card{
-	height:35px;
-	border-radius: 5px 5px 5px 5px;
-	-moz-border-radius: 5px 5px 5px 5px;
-	-webkit-border-radius: 5px 5px 5px 5px;
-	border: 1px solid #000000;
-	text-align:center;
+	background-color: #fff;
+	font-family: 'Suit-Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	-moz-border-radius: 0.8em;
+	-webkit-border-radius: 0.8em;
+	border-radius: 0.8em;
+	-moz-box-shadow: 0 0 5px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.5);
+	box-shadow: 0 0 5px rgba(0,0,0,0.5);
+	float: left;
+	width: 8em;
+	height: 11.2em;
+	margin: 0 1.2em 1.2em 0;
+	position: relative;
+	z-index: 2;
 }
+
+.players .card{
+	height:5.6em;
+	width: 4em;
+}
+
+
+.current-player {
+    -webkit-box-shadow:0 0 20px blue; 
+    -moz-box-shadow: 0 0 20px blue; 
+    box-shadow:0 0 20px blue;
+}
+

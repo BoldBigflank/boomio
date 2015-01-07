@@ -3,37 +3,54 @@ extends layout
 block content
     .container(ng-controller='GameCtrl')
       //- The Players 
-      .row.center-block
-        .col-md-2(ng-if='player.id != p.id ', ng-repeat='p in otherPlayers')
+      .row.center-block.players
+        .col-xs-3.well(ng-class="{ 'current-player': game.players[game.turn] == otherPlayers[$index] }", ng-repeat='p in otherPlayers')
           .row
-            .col-md-12
-              | {{p.name}}
-              span.glyphicon.glyphicon-heart(ng-repeat='a in range(p.lives) track by $index')
-            .col-md-12
-              .card.col-md-1(ng-repeat='card in p.hand track by $index')
-                | {{$index}}  
+            .col-xs-12
+              .col-xs-6
+                | {{p.name}}
+              .col-xs-6
+                span.glyphicon.glyphicon-heart(ng-repeat='a in range(p.lives) track by $index')
+            .col-xs-12
+              .col-xs-1(ng-repeat='card in p.hand track by $index')
+                span.card
       .row
-        .col-md-4.col-md-offset-4
-          .well.col-md-12
+        .col-xs-8.col-xs-offset-2
+          .well.col-xs-4
             | Timer
             br
             | {{game.timer}}
-          .well.col-md-12
-            .card.col-md-4(ng-repeat='card in game.discard | limitTo: 3')
-              span {{card}}
-      .row
-        .col-md-12
-          a.button(href='', ng-click='startGame()') start
+          .well.col-xs-8
+            .card.col-xs-4(ng-repeat='card in game.discard | limitTo: 3 track by $index')
+              .card-ace.club
+                .corner.top
+                  span.number {{card.slice(0,3)}}
+                  span(ng-if='card.length>=4') {{card.slice(-1)}}
+                span.suit.middle_center {{card}}
+                .corner.bottom
+                  span.number {{card.slice(0,3)}}
+                  span(ng-if='card.length>=4') {{card.slice(-1)}}
       //- Player Info/Hand 
       nav.navbar.navbar-default.navbar-fixed-bottom(role='navigation')
-        .container
+        .container.player
           .row
-            .col-md-6
-              | {{player.name}}
-            .col-md-6
-              | Lives:
-              span.glyphicon.glyphicon-heart(ng-repeat='a in range(player.lives) track by $index')
-            .card.col-md-1(ng-repeat='card in player.hand track by $index')
-              a(href='#', ng-click='playCard($index)')
-                span {{card}}
+            .col-xs-8.col-xs-offset-2(ng-class="{ 'current-player': game.players[game.turn] == player } ")
+              .col-xs-6
+                | {{player.name}}
+              .col-xs-6
+                | Lives:
+                span.glyphicon.glyphicon-heart(ng-repeat='a in range(player.lives) track by $index')
+              a.col-xs-1(href='#', ng-click='playCard($index)', ng-repeat='card in player.hand track by $index')
+                span.card
+                  .card-ace.club
+                    .corner.top
+                      span.number(ng-if="card.length<4") {{card}}
+                      span.number(ng-if="card.length>=4") {{card.slice(0,1)}}
+                      span(ng-if='card.length>=4') {{card.slice(-1)}}
+                    span.suit.middle_center {{card}}
+                    .corner.bottom
+                      span.number {{card.slice(0,1)}}
+                      span(ng-if='card.length>=4') {{card.slice(-1)}}
+            .col-xs-2
+              a.button(ng-if='game.state == "prep"', href='', ng-click='startGame()') start
 block scripts
