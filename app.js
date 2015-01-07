@@ -4,13 +4,16 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var boomo = require('./game.js');
 
+app.engine('jade', require('jade').__express);
+
 var port = process.env.PORT || 3000;
 server.listen(port);
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+
+app.get('/', function(req, res) {
+  res.render('index.jade', { title: 'Boomio' });
 });
 
 // Socket variables
