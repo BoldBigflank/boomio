@@ -48,8 +48,8 @@ var newDeck = function(){
         'HOLD', 'HOLD', 'HOLD', 'HOLD', 'HOLD', 'HOLD', 'HOLD', 'HOLD', 'HOLD', 'HOLD',
         '5','5','5','5','5','5','5','5','5','5','5','5','5','5','5','5','5','5','5','5',
         '10','10','10','10','10','10','10','10','10','10','10','10','10','10','10','10','10','10','10','10',
-        '☜REVERSE','☜REVERSE','☜REVERSE','☜REVERSE','☜REVERSE','☜REVERSE',
-        '☞SKIP','☞SKIP','☞SKIP','☞SKIP','☞SKIP','☞SKIP',
+        'REVERSE','REVERSE','REVERSE','REVERSE','REVERSE','REVERSE',
+        'SKIP','SKIP','SKIP','SKIP','SKIP','SKIP',
         ':0',':0',':0',':0',
         ':30',':30',':30',':30',
         ':60',':60',':60',
@@ -57,7 +57,7 @@ var newDeck = function(){
         'DRAW2','DRAW2',
         'TRADE','TRADE',
         'DOUBLE','DOUBLE',
-        '☀BOMB','☀BOMB','☀BOMB'
+        'BOMB','BOMB','BOMB'
     ];
     return _.shuffle(deck);
 };
@@ -168,7 +168,7 @@ exports.start = function(gameId, cb){
     for( var i in game.players){
         var player = game.players[i];
         if(player.state == 'active'){
-            game.turn = i;
+            game.turn = parseInt(i);
             break;
         }
     }
