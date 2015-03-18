@@ -1,3 +1,7 @@
+body{
+	padding-bottom: 18.12em;
+}
+
 .players{
 	min-height:150px;
 }
@@ -25,10 +29,13 @@
 	width: 4em;
 }
 
+.middle_center{
+	font-size:16px;
+	font-size:4vw!important;
+}
 
-.current-player {
-    -webkit-box-shadow:0 0 20px blue; 
-    -moz-box-shadow: 0 0 20px blue; 
-    box-shadow:0 0 20px blue;
+.timer {
+	
+
 }
 
